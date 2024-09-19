@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Menu, X, Sun, Moon } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Menu, X, Sun, Moon, LogOut } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 import { useUser } from "../hooks/hooks";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const { username, logout } = useUser();
+  const navigate = useNavigate();
 
   // Toggle dark mode and update localStorage
   const toggleDarkMode = () => {
@@ -14,11 +16,7 @@ export default function Header() {
     localStorage.setItem("darkMode", JSON.stringify(newDarkMode));
     document.documentElement.classList.toggle("dark", newDarkMode);
   };
-const user = localStorage.getItem("user");
-  console.log(user);
 
-  const [show, setShow] = useState(localStorage.getItem("user"))
-  
   // Check for dark mode from localStorage on component mount
   useEffect(() => {
     const storedDarkMode = JSON.parse(localStorage.getItem("darkMode"));
@@ -27,6 +25,12 @@ const user = localStorage.getItem("user");
       document.documentElement.classList.toggle("dark", storedDarkMode);
     }
   }, []); // Run only on mount
+
+  // Logout function
+  const handleLogout = () => {
+    logout(); // Clear user session
+    navigate("/login"); // Redirect to login page
+  };
 
   return (
     <header className="bg-white shadow-md dark:bg-neutral-900">
@@ -81,18 +85,35 @@ const user = localStorage.getItem("user");
                 <Moon className="w-5 h-5" />
               )}
             </button>
-            <Link
-              to="/login"
-              className="text-base font-medium whitespace-nowrap text-neutral-500 hover:text-neutral-900 dark:text-neutral-300 dark:hover:text-white"
-            >
-              Sign in
-            </Link>
-            <Link
-              to="/signup"
-              className="inline-flex items-center justify-center px-4 py-2 ml-8 text-base font-medium text-white border border-transparent rounded-md shadow-sm whitespace-nowrap bg-primary-600 hover:bg-primary-700"
-            >
-              Sign up
-            </Link>
+            {username ? (
+              <>
+                <span className="text-base font-medium text-neutral-500 dark:text-neutral-300">
+                  {username}
+                </span>
+                <button
+                  onClick={handleLogout}
+                  className="inline-flex items-center px-4 py-2 ml-4 text-base font-medium text-white border border-transparent rounded-md shadow-sm bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                >
+                  <LogOut className="w-5 h-5 mr-2" />
+                  Logout
+                </button>
+              </>
+            ) : (
+              <>
+                <Link
+                  to="/login"
+                  className="text-base font-medium whitespace-nowrap text-neutral-500 hover:text-neutral-900 dark:text-neutral-300 dark:hover:text-white"
+                >
+                  Sign in
+                </Link>
+                <Link
+                  to="/signup"
+                  className="inline-flex items-center justify-center px-4 py-2 ml-8 text-base font-medium text-white border border-transparent rounded-md shadow-sm whitespace-nowrap bg-primary-600 hover:bg-primary-700"
+                >
+                  Sign up
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -147,10 +168,21 @@ const user = localStorage.getItem("user");
                 </nav>
               </div>
             </div>
-            {show ? (
-              <p>{show}</p>
+            {username ? (
+              <div className="px-5 py-6">
+                <p className="text-base font-medium text-neutral-900 dark:text-neutral-100">
+                  {username}
+                </p>
+                <button
+                  onClick={handleLogout}
+                  className="inline-flex items-center justify-center w-full px-4 py-2 mt-6 text-base font-medium text-white border border-transparent rounded-md shadow-sm bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                >
+                  <LogOut className="w-5 h-5 mr-2" />
+                  Logout
+                </button>
+              </div>
             ) : (
-              <div>
+              <div className="px-5 py-6">
                 <Link
                   to="/signup"
                   className="flex items-center justify-center w-full px-4 py-2 text-base font-medium text-white border border-transparent rounded-md shadow-sm bg-primary-600 hover:bg-primary-700"

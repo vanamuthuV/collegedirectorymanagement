@@ -11,7 +11,7 @@ export default function LoginPage() {
   const [role, setRole] = useState("");
   const [error, setError] = useState("");
 
-  const { setUsernames } = useUser();
+  const { setUsername: setUsernames } = useUser(); // Ensure this is named correctly
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -31,10 +31,11 @@ export default function LoginPage() {
           role: role,
         }
       );
-      console.log(response?.data);
-
-      setUsernames(username); // Update the context username
+      console.log(response);
+      
+      setUsernames(response?.data?.username); // Update the context username
       localStorage.setItem("user", username);
+
       switch (response?.data?.role) {
         case "Student":
           window.location.href = "/student";

@@ -5,12 +5,11 @@ export const UserContext = createContext();
 
 // Create a Provider component
 export const UserProvider = ({ children }) => {
-  const [username, setUsernames] = useState("");
+  const [username, setUsername] = useState("");
 
   return (
-    <UserContext.Provider value={{ username, setUsernames }}>
+    <UserContext.Provider value={{ username, setUsername }}>
       {children}
     </UserContext.Provider>
   );
 };
-
